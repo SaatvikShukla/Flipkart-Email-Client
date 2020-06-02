@@ -9,6 +9,7 @@
   margin: 20px;
   border-radius: 10px;
   background-color: #FFFFFF;
+  border: 0.5px solid #CFD2DC;
 }
 
 .halfScreenView{
@@ -36,7 +37,12 @@
   margin: 20px;
   border-radius: 10px;
   background-color: #FFF;
+  border: 0.5px solid #CFD2DC;
 }
 .emailCardWrapper {
   padding-top: 20px
+}
+
+.readEmail {
+  background-color: #f2f2f2;
 }

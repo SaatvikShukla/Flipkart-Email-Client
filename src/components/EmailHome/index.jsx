@@ -12,18 +12,29 @@ export default function EmailHome() {
 
   useEffect(() => {
     getEmails().then(resp => {
+      resp.list.forEach(item => {
+        item.isRead = false;
+        item.isFavourite = false;
+      });
       setUserEmails(resp.list);
       setUserEmailsCount(resp.total);
     })
 
   }, []);
 
-  function emailCardClickHandler(id) {
-    getEmailDataWithId({ id: id }).then(resp => {
+  function emailCardClickHandler(data) {
+
+    // get full email
+    getEmailDataWithId({ id: data.id }).then(resp => {
       console.log('resp', resp);
       setShowDetailedEmail(true);
       setCurrentEmailDetails(resp);
     })
+
+    // set current email as read
+    let _userEmails = [...userEmails];
+    _userEmails[_userEmails.findIndex(item => item.id === data.id)].isRead = true;
+    setUserEmails(_userEmails);
   }
 
   return (
@@ -31,7 +42,14 @@ export default function EmailHome() {
       <div className={"pageWrapper"}>
         <ShowIfPropTrue prop={showDetailedEmail}>
           <div className={"detailedEmailWrapper"}>
-            {currentEmailDetails.body}
+            {/* Temporarily set inner html,
+            TODO later
+             */}
+            {/* <div>
+              <div className="user-avatar">{item.from.name.charAt(0)}</div>
+              <div>From : <b>{item.from.name} {"<" + item.from.email + ">"} </b></div>
+            </div> */}
+            <div dangerouslySetInnerHTML={{ __html: currentEmailDetails.body }} />
           </div>
         </ShowIfPropTrue>
         <div className={"emailCardWrapper"}>
@@ -39,10 +57,16 @@ export default function EmailHome() {
             console.log(item);
             return (
               <>
-                <div className={"emailCard" + (showDetailedEmail === true ? " halfScreenView" : '')} onClick={() => { emailCardClickHandler(item.id) }}>
+                <div
+                  className={"emailCard" +
+                    (showDetailedEmail === true ? " halfScreenView" : '') +
+                    (item.isRead === true ? " readEmail" : '')
+                  }
+                  onClick={() => { emailCardClickHandler(item) }}
+                >
                   <div className="user-avatar">{item.from.name.charAt(0)}</div>
-                  <div>From : {item.from.name} {"<" + item.from.email + ">"}</div>
-                  <div>Subject : {item.subject} </div>
+                  <div>From : <b>{item.from.name} {"<" + item.from.email + ">"} </b></div>
+                  <div>Subject <b> : {item.subject} </b></div>
                   <div>{item.short_description}</div>
                   <div>{moment(item.date).format('DD/MM/YYYY HH:MM')}</div>
                 </div>
