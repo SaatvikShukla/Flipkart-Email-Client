@@ -16,7 +16,7 @@
   width: 30%;
 }
 .user-avatar {
-  background: #2e75ff;
+  background: #e54065;
   /* margin: 9px 1px 1px 1px !important; */
   border-radius: 100%;
   width: 40px;
@@ -32,12 +32,13 @@
   position: fixed;
   width: 60%;
   right: 0;
-  min-height: 100vh;
+  min-height: 85vh;
   padding: 20px;
   margin: 20px;
   border-radius: 10px;
   background-color: #FFF;
   border: 0.5px solid #CFD2DC;
+  margin-top: 100px;
 }
 .emailCardWrapper {
   padding-top: 20px
@@ -45,4 +46,15 @@
 
 .readEmail {
   background-color: #f2f2f2;
+}
+
+.filters {
+  padding-left: 28px;
+  padding-top: 6px;
+}
+
+.buttonStyle {
+  padding: 10px;
+  border-radius: 25px;
+  margin-left: 9px;
 }

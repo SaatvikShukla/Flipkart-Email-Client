@@ -7,6 +7,7 @@ import ShowIfPropTrue from '../../util/ShowIfPropTrue';
 export default function EmailHome() {
   const [userEmails, setUserEmails] = useState([]);
   const [showDetailedEmail, setShowDetailedEmail] = useState(false);
+  const [detailedEmailMeta, setDetailedEmailMeta] = useState({});
   const [currentEmailDetails, setCurrentEmailDetails] = useState([]);
   const [userEmailsCount, setUserEmailsCount] = useState([]);
 
@@ -23,18 +24,24 @@ export default function EmailHome() {
   }, []);
 
   function emailCardClickHandler(data) {
-
     // get full email
     getEmailDataWithId({ id: data.id }).then(resp => {
-      console.log('resp', resp);
-      setShowDetailedEmail(true);
+      // setDetailedEmailMeta(data);
       setCurrentEmailDetails(resp);
+      setShowDetailedEmail(true);
+
+      let _userEmails = [...userEmails];
+      _userEmails[_userEmails.findIndex(item => item.id === data.id)].isRead = true;
+      setUserEmails(_userEmails);
     })
 
     // set current email as read
+  }
+
+  function onlyShowUnread() {
     let _userEmails = [...userEmails];
-    _userEmails[_userEmails.findIndex(item => item.id === data.id)].isRead = true;
-    setUserEmails(_userEmails);
+    setUserEmails(_userEmails.filter(item => item.isRead === false));
+    setUserEmailsCount(_userEmails.filter(item => item.isRead === false).length)
   }
 
   return (
@@ -42,36 +49,49 @@ export default function EmailHome() {
       <div className={"pageWrapper"}>
         <ShowIfPropTrue prop={showDetailedEmail}>
           <div className={"detailedEmailWrapper"}>
-            {/* Temporarily set inner html,
-            TODO later
-             */}
-            {/* <div>
-              <div className="user-avatar">{item.from.name.charAt(0)}</div>
-              <div>From : <b>{item.from.name} {"<" + item.from.email + ">"} </b></div>
-            </div> */}
+            <> {JSON.stringify(detailedEmailMeta['from'])}</>
+            <>
+              <div className="user-avatar">{'D'}</div>
+              <div>From : <b>{'Dummy Name'} {"<" + 'dummyEmail@google.com' + ">"} </b></div>
+              <div>{moment(detailedEmailMeta.date).format('DD/MM/YYYY HH:MM')}</div>
+            </>
             <div dangerouslySetInnerHTML={{ __html: currentEmailDetails.body }} />
           </div>
         </ShowIfPropTrue>
         <div className={"emailCardWrapper"}>
-          {userEmails.map((item) => {
-            console.log(item);
-            return (
-              <>
-                <div
-                  className={"emailCard" +
-                    (showDetailedEmail === true ? " halfScreenView" : '') +
-                    (item.isRead === true ? " readEmail" : '')
-                  }
-                  onClick={() => { emailCardClickHandler(item) }}
-                >
-                  <div className="user-avatar">{item.from.name.charAt(0)}</div>
-                  <div>From : <b>{item.from.name} {"<" + item.from.email + ">"} </b></div>
-                  <div>Subject <b> : {item.subject} </b></div>
-                  <div>{item.short_description}</div>
-                  <div>{moment(item.date).format('DD/MM/YYYY HH:MM')}</div>
-                </div>
-              </>);
-          })}
+          <>
+            <div className="filters">
+              <div>
+                Filter by:
+                <button className="buttonStyle" onClick={onlyShowUnread}>Unread</button>
+                <button className="buttonStyle">Read</button>
+                <button className="buttonStyle">Favourite</button>
+                {/* <button className="buttonStyle" onClick={res}>Reset</button> */}
+              </div>
+              <div>
+                {"Showing " + userEmailsCount + " emails."}
+              </div>
+            </div>
+            {userEmails.map((item) => {
+              console.log(item);
+              return (
+                <>
+                  <div
+                    className={"emailCard" +
+                      (showDetailedEmail === true ? " halfScreenView" : '') +
+                      (item.isRead === true ? " readEmail" : '')
+                    }
+                    onClick={() => { emailCardClickHandler(item) }}
+                  >
+                    <div className="user-avatar">{item.from.name.charAt(0)}</div>
+                    <div>From : <b>{item.from.name} {"<" + item.from.email + ">"} </b></div>
+                    <div>Subject <b> : {item.subject} </b></div>
+                    <div>{item.short_description}</div>
+                    <div>{moment(item.date).format('DD/MM/YYYY HH:MM')}</div>
+                  </div>
+                </>);
+            })}
+          </>
         </div>
       </div>
     </>
